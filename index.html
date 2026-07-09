@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat com Login e Cadastro - Firebase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- TELA DE LOGIN / CADASTRO --- */
+        .auth-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f2f5;
+            position: absolute;
+            z-index: 20;
+        }
+
+        .auth-card {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .auth-card input:focus {
+            border-color: #007bff;
+        }
+
+        .auth-card button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .auth-card button:hover {
+            background-color: #0056b3;
+        }
+
+        .auth-card p {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .auth-card p span {
+            color: #007bff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* --- CONTAINER DO CHAT (FULL SCREEN) --- */
+        .chat-container {
+            width: 100%;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            display: none; /* Escondido por padrão até o login */
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #bd2130;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #e5ddd5;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 60%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message.sent {
+            background-color: #d9fdd3;
+            align-self: flex-end;
+            border-top-right-radius: 0;
+        }
+
+        .message.received {
+            background-color: #ffffff;
+            align-self: flex-start;
+            border-top-left-radius: 0;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 15px 20px;
+            background-color: #f0f0f0;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            outline: none;
+            font-size: 1rem;
+            transition: border 0.2s;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #007bff;
+        }
+
+        .chat-input-area button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            margin-left: 12px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tela de Autenticação -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-card">
+            <h2 id="authTitle">Fazer Login</h2>
+            <input type="email" id="authEmail" placeholder="Seu e-mail" required>
+            <input type="password" id="authPassword" placeholder="Sua senha (mín. 6 caracteres)" required>
+            <button id="authSubmitBtn">Entrar</button>
+            <p id="authToggleText">Não tem uma conta? <span id="authToggleLink">Cadastre-se</span></p>
+        </div>
+    </div>
+
+    <!-- Container do Chat (Apenas visível se logado) -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <span id="userEmailHeader">Chat Firebase</span>
+            <button class="logout-btn" id="logoutButton">Sair</button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Mensagens em tempo real aqui -->
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="Digite uma mensagem..." autocomplete="off">
+            <button id="sendButton">Enviar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // NOVO: Importando os módulos de Autenticação
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWQKWMcD3yHBw18Ss58-UQIb9j3dHeXAU",
+            authDomain: "hello-e7d45.firebaseapp.com",
+            projectId: "hello-e7d45",
+            storageBucket: "hello-e7d45.firebasestorage.app",
+            messagingSenderId: "1060294872904",
+            appId: "1:1060294872904:web:6dde221970da5340362d7d",
+            measurementId: "G-NYZNNHG81T"
+        };
+
+        // Inicializações do Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const messagesRef = collection(db, "messages");
+
+        // Variáveis de Controle de Estado
+        let mySenderId = null;
+        let isSignUpMode = false; 
+        let unsubscribeMessages = null; // Guardará o listener do chat para limpar ao deslogar
+
+        // Elementos DOM da Autenticação
+        const authContainer = document.getElementById('authContainer');
+        const chatContainer = document.getElementById('chatContainer');
+        const authTitle = document.getElementById('authTitle');
+        const authEmail = document.getElementById('authEmail');
+        const authPassword = document.getElementById('authPassword');
+        const authSubmitBtn = document.getElementById('authSubmitBtn');
+        const authToggleLink = document.getElementById('authToggleLink');
+        const authToggleText = document.getElementById('authToggleText');
+        const userEmailHeader = document.getElementById('userEmailHeader');
+        const logoutButton = document.getElementById('logoutButton');
+
+        // Elementos DOM do Chat
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // --- LÓGICA DE ALTERNÂNCIA: LOGIN <=> CADASTRO ---
+        authToggleLink.addEventListener('click', () => {
+            isSignUpMode = !isSignUpMode;
+            if (isSignUpMode) {
+                authTitle.innerText = "Criar Conta";
+                authSubmitBtn.innerText = "Cadastrar";
+                authToggleText.innerHTML = 'Já tem uma conta? <span id="authToggleLink">Faça Login</span>';
+            } else {
+                authTitle.innerText = "Fazer Login";
+                authSubmitBtn.innerText = "Entrar";
+                authToggleText.innerHTML = 'Não tem uma conta? <span id="authToggleLink">Cadastre-se</span>';
+            }
+            // Reatribui o evento ao novo link criado dinamicamente via innerHTML
+            document.getElementById('authToggleLink').addEventListener('click', () => authToggleLink.click());
+        });
+
+        // --- SUBMIT DE AUTENTICAÇÃO (LOGIN / CADASTRO) ---
+        authSubmitBtn.addEventListener('click', async () => {
+            const email = authEmail.value.trim();
+            const password = authPassword.value;
+
+            if (!email || !password) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            try {
+                if (isSignUpMode) {
+                    // Criar novo usuário
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    alert("Conta criada com sucesso!");
+                } else {
+                    // Logar usuário existente
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Erro: " + error.message);
+            }
+        });
+
+        // --- LOGOUT (SAIR DA CONTA) ---
+        logoutButton.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // --- MONITOR DE ESTADO DO USUÁRIO (Saber se está logado ou não) ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Usuário está logado
+                mySenderId = user.uid;
+                userEmailHeader.innerText = `Logado como: ${user.email}`;
+                
+                // Transiciona as telas
+                authContainer.style.display = 'none';
+                chatContainer.style.display = 'flex';
+                
+                // Inicia a escuta das mensagens em tempo real
+                startChatListener();
+            } else {
+                // Usuário deslogou ou não está logado
+                mySenderId = null;
+                authContainer.style.display = 'flex';
+                chatContainer.style.display = 'none';
+                chatMessages.innerHTML = ''; // Limpa mensagens antigas da tela
+                
+                // Cancela o monitoramento do banco se ele existir
+                if (unsubscribeMessages) {
+                    unsubscribeMessages();
+                }
+            }
+        });
+
+        // --- LÓGICA DE RENDERIZAÇÃO DE MENSAGENS ---
+        function appendMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', type);
+            messageDiv.innerText = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // --- ESCUTAR BANCO DE DADOS EM TEMPO REAL ---
+        function startChatListener() {
+            const q = query(messagesRef, orderBy("createdAt", "asc"));
+            unsubscribeMessages = onSnapshot(q, (snapshot) => {
+                chatMessages.innerHTML = ''; 
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const type = data.senderId === mySenderId ? 'sent' : 'received';
+                    if (data.text) {
+                        appendMessage(data.text, type);
+                    }
+                });
+            });
+        }
+
+        // --- ENVIAR MENSAGEM PARA O FIREBASE ---
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (text === '' || !mySenderId) return; 
+
+            try {
+                await addDoc(messagesRef, {
+                    text: text,
+                    senderId: mySenderId, // Usa o UID real do Firebase Auth
+                    createdAt: serverTimestamp()
+                });
+                messageInput.value = ''; 
+            } catch (error) {
+                console.error("Erro ao enviar:", error);
+            }
+        }
+
+        // Eventos de envio do chat
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
