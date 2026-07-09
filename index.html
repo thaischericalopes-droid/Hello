@@ -116,16 +116,81 @@
             z-index: 10;
         }
 
+        /* --- NOVO: ESTILOS DO MENU --- */
+        .menu-wrapper {
+            position: relative;
+        }
+
+        .menu-toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .menu-toggle-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 130%;
+            background-color: white;
+            min-width: 220px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 10px;
+            z-index: 100;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .dropdown-menu.active {
+            display: flex;
+        }
+
+        .menu-user-info {
+            font-size: 0.85rem;
+            color: #666;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            word-break: break-all;
+        }
+
+        .menu-item {
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 10px;
+            font-size: 0.95rem;
+            color: #333;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: #f5f5f5;
+        }
+
         .logout-btn {
             background-color: #dc3545;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: bold;
             transition: background 0.2s;
+            text-align: center;
+            margin-top: 5px;
         }
 
         .logout-btn:hover {
@@ -169,6 +234,61 @@
             padding: 15px 20px;
             background-color: #f0f0f0;
             border-top: 1px solid #ddd;
+            align-items: center;
+        }
+
+        /* --- NOVO: ESTILOS DO EMOJI PICKER --- */
+        .emoji-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .emoji-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0 12px 0 0;
+            transition: transform 0.1s;
+        }
+
+        .emoji-toggle-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            bottom: 150%;
+            left: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            padding: 10px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            width: 260px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .emoji-picker.active {
+            display: grid;
+        }
+
+        .emoji-picker span {
+            font-size: 1.3rem;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+
+        .emoji-picker span:hover {
+            transform: scale(1.25);
         }
 
         .chat-input-area input {
@@ -185,11 +305,11 @@
             border-color: #007bff;
         }
 
-        .chat-input-area button {
+        .chat-input-area button.send-btn {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 0 25px;
+            padding: 14px 25px;
             margin-left: 12px;
             border-radius: 25px;
             cursor: pointer;
@@ -198,14 +318,13 @@
             transition: background 0.2s;
         }
 
-        .chat-input-area button:hover {
+        .chat-input-area button.send-btn:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-    <!-- Tela de Autenticação -->
     <div class="auth-container" id="authContainer">
         <div class="auth-card">
             <h2 id="authTitle">Fazer Login</h2>
@@ -216,27 +335,45 @@
         </div>
     </div>
 
-    <!-- Container do Chat (Apenas visível se logado) -->
     <div class="chat-container" id="chatContainer">
         <div class="chat-header">
-            <span id="userEmailHeader">Chat Firebase</span>
-            <button class="logout-btn" id="logoutButton">Sair</button>
+            <span>Chat Firebase</span>
+            
+            <div class="menu-wrapper" id="menuWrapper">
+                <button class="menu-toggle-btn" id="menuToggleBtn">⋮</button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="menu-user-info" id="menuUserInfo">Carregando usuário...</div>
+                    <button class="menu-item" onclick="alert('Funcionalidade de perfil em breve!')">Meu Perfil</button>
+                    <button class="menu-item" onclick="alert('Configurações em breve!')">Configurações</button>
+                    <button class="logout-btn" id="logoutButton">Sair da Conta</button>
+                </div>
+            </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
-            <!-- Mensagens em tempo real aqui -->
-        </div>
+            </div>
 
         <div class="chat-input-area">
+            <div class="emoji-wrapper" id="emojiWrapper">
+                <button class="emoji-toggle-btn" id="emojiToggleBtn">😊</button>
+                <div class="emoji-picker" id="emojiPicker">
+                    <span>😀</span><span>😃</span><span>😄</span><span>😁</span><span>😆</span><span>😅</span>
+                    <span>😂</span><span>🤣</span><span>😊</span><span>😇</span><span>🙂</span><span>🙃</span>
+                    <span>😉</span><span>😌</span><span>😍</span><span>🥰</span><span>😘</span><span>😗</span>
+                    <span>😋</span><span>😛</span><span>😝</span><span>😜</span><span>🤪</span><span>😎</span>
+                    <span>🥳</span><span>😏</span><span>👍</span><span>👎</span><span>👏</span><span>🙌</span>
+                    <span>❤️</span><span>💔</span><span>🔥</span><span>✨</span><span>🎉</span><span>🚀</span>
+                </div>
+            </div>
+
             <input type="text" id="messageInput" placeholder="Digite uma mensagem..." autocomplete="off">
-            <button id="sendButton">Enviar</button>
+            <button class="send-btn" id="sendButton">Enviar</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        // NOVO: Importando os módulos de Autenticação
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -258,7 +395,7 @@
         // Variáveis de Controle de Estado
         let mySenderId = null;
         let isSignUpMode = false; 
-        let unsubscribeMessages = null; // Guardará o listener do chat para limpar ao deslogar
+        let unsubscribeMessages = null; 
 
         // Elementos DOM da Autenticação
         const authContainer = document.getElementById('authContainer');
@@ -269,13 +406,52 @@
         const authSubmitBtn = document.getElementById('authSubmitBtn');
         const authToggleLink = document.getElementById('authToggleLink');
         const authToggleText = document.getElementById('authToggleText');
-        const userEmailHeader = document.getElementById('userEmailHeader');
         const logoutButton = document.getElementById('logoutButton');
 
         // Elementos DOM do Chat
         const chatMessages = document.getElementById('chatMessages');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
+
+        // ELEMENTOS NOVOS (Menu e Emoji)
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const menuUserInfo = document.getElementById('menuUserInfo');
+        const emojiToggleBtn = document.getElementById('emojiToggleBtn');
+        const emojiPicker = document.getElementById('emojiPicker');
+
+        // --- LÓGICA DE INTERAÇÃO DO MENU ---
+        menuToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+            emojiPicker.classList.remove('active'); // Fecha o emoji picker se aberto
+        });
+
+        // --- LÓGICA DE INTERAÇÃO DO EMOJI PICKER ---
+        emojiToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiPicker.classList.toggle('active');
+            dropdownMenu.classList.remove('active'); // Fecha o menu se aberto
+        });
+
+        // Inserir emoji no campo de texto ao clicar
+        emojiPicker.querySelectorAll('span').forEach(emojiSpan => {
+            emojiSpan.addEventListener('click', () => {
+                messageInput.value += emojiSpan.innerText;
+                messageInput.focus(); // Mantém o foco no input do texto
+            });
+        });
+
+        // Fechar os menus flutuantes caso o usuário clique fora deles
+        document.addEventListener('click', () => {
+            dropdownMenu.classList.remove('active');
+            emojiPicker.classList.remove('active');
+        });
+
+        // Evita fechar os menus ao clicar dentro deles mesmos
+        document.getElementById('menuWrapper').addEventListener('click', (e) => e.stopPropagation());
+        document.getElementById('emojiWrapper').addEventListener('click', (e) => e.stopPropagation());
+
 
         // --- LÓGICA DE ALTERNÂNCIA: LOGIN <=> CADASTRO ---
         authToggleLink.addEventListener('click', () => {
@@ -289,7 +465,6 @@
                 authSubmitBtn.innerText = "Entrar";
                 authToggleText.innerHTML = 'Não tem uma conta? <span id="authToggleLink">Cadastre-se</span>';
             }
-            // Reatribui o evento ao novo link criado dinamicamente via innerHTML
             document.getElementById('authToggleLink').addEventListener('click', () => authToggleLink.click());
         });
 
@@ -305,11 +480,9 @@
 
             try {
                 if (isSignUpMode) {
-                    // Criar novo usuário
                     await createUserWithEmailAndPassword(auth, email, password);
                     alert("Conta criada com sucesso!");
                 } else {
-                    // Logar usuário existente
                     await signInWithEmailAndPassword(auth, email, password);
                 }
             } catch (error) {
@@ -323,27 +496,24 @@
             signOut(auth);
         });
 
-        // --- MONITOR DE ESTADO DO USUÁRIO (Saber se está logado ou não) ---
+        // --- MONITOR DE ESTADO DO USUÁRIO ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Usuário está logado
                 mySenderId = user.uid;
-                userEmailHeader.innerText = `Logado como: ${user.email}`;
                 
-                // Transiciona as telas
+                // Atualiza o e-mail do usuário dentro do Menu Suspenso
+                menuUserInfo.innerText = `Logado como:\n${user.email}`;
+                
                 authContainer.style.display = 'none';
                 chatContainer.style.display = 'flex';
                 
-                // Inicia a escuta das mensagens em tempo real
                 startChatListener();
             } else {
-                // Usuário deslogou ou não está logado
                 mySenderId = null;
                 authContainer.style.display = 'flex';
                 chatContainer.style.display = 'none';
-                chatMessages.innerHTML = ''; // Limpa mensagens antigas da tela
+                chatMessages.innerHTML = ''; 
                 
-                // Cancela o monitoramento do banco se ele existir
                 if (unsubscribeMessages) {
                     unsubscribeMessages();
                 }
@@ -382,10 +552,11 @@
             try {
                 await addDoc(messagesRef, {
                     text: text,
-                    senderId: mySenderId, // Usa o UID real do Firebase Auth
+                    senderId: mySenderId, 
                     createdAt: serverTimestamp()
                 });
                 messageInput.value = ''; 
+                emojiPicker.classList.remove('active'); // Opcional: Fecha os emojis ao enviar
             } catch (error) {
                 console.error("Erro ao enviar:", error);
             }
