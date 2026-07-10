@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat com Login e Cadastro - Firebase</title>
+    <title>Chat Firebase</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,7 @@
             align-items: center;
         }
 
-        /* --- TELA DE LOGIN / CADASTRO --- */
+        /* --- TELA DE LOGIN / CADASTRO (MAIS COMPACTA) --- */
         .auth-container {
             width: 100%;
             height: 100vh;
@@ -36,27 +36,28 @@
 
         .auth-card {
             background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             width: 100%;
-            max-width: 400px;
+            max-width: 350px;
             text-align: center;
         }
 
         .auth-card h2 {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: #333;
+            font-size: 1.4rem;
         }
 
         .auth-card input {
             width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 15px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
             border: 1px solid #ccc;
-            border-radius: 8px;
+            border-radius: 6px;
             outline: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .auth-card input:focus {
@@ -65,12 +66,12 @@
 
         .auth-card button {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
             transition: background 0.2s;
@@ -81,8 +82,8 @@
         }
 
         .auth-card p {
-            margin-top: 20px;
-            font-size: 0.9rem;
+            margin-top: 15px;
+            font-size: 0.85rem;
             color: #666;
         }
 
@@ -92,7 +93,7 @@
             font-weight: bold;
         }
 
-        /* --- CONTAINER DO CHAT (FULL SCREEN) --- */
+        /* --- CONTAINER DO CHAT (COMPACTADO) --- */
         .chat-container {
             width: 100%;
             height: 100vh;
@@ -100,23 +101,23 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            display: none; /* Escondido por padrão até o login */
+            display: none; 
         }
 
         .chat-header {
             background-color: #007bff;
             color: white;
-            padding: 15px 20px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
             z-index: 10;
         }
 
-        /* --- NOVO: ESTILOS DO MENU --- */
+        /* --- MENU DROPDOWN --- */
         .menu-wrapper {
             position: relative;
         }
@@ -125,9 +126,9 @@
             background: none;
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 3px 8px;
             border-radius: 50%;
             transition: background 0.2s;
         }
@@ -142,13 +143,13 @@
             right: 0;
             top: 130%;
             background-color: white;
-            min-width: 220px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            padding: 10px;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 6px;
+            padding: 8px;
             z-index: 100;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .dropdown-menu.active {
@@ -156,9 +157,9 @@
         }
 
         .menu-user-info {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #666;
-            padding: 8px;
+            padding: 6px;
             border-bottom: 1px solid #eee;
             word-break: break-all;
         }
@@ -167,8 +168,8 @@
             background: none;
             border: none;
             text-align: left;
-            padding: 10px;
-            font-size: 0.95rem;
+            padding: 8px;
+            font-size: 0.88rem;
             color: #333;
             cursor: pointer;
             border-radius: 4px;
@@ -183,38 +184,40 @@
             background-color: #dc3545;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.88rem;
             font-weight: bold;
             transition: background 0.2s;
             text-align: center;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .logout-btn:hover {
             background-color: #bd2130;
         }
 
+        /* --- ÁREA DE MENSAGENS (Tamanhos reduzidos) --- */
         .chat-messages {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
-            background-color: #e5ddd5;
+            background-color: #e5ddd5; /* Padrão inicial */
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            transition: background-color 0.3s;
         }
 
         .message {
-            max-width: 60%;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 1rem;
-            line-height: 1.4;
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.35;
             word-wrap: break-word;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.08);
         }
 
         .message.sent {
@@ -229,15 +232,15 @@
             border-top-left-radius: 0;
         }
 
+        /* --- ÁREA DE INPUT COMPACTA --- */
         .chat-input-area {
             display: flex;
-            padding: 15px 20px;
+            padding: 10px 15px;
             background-color: #f0f0f0;
             border-top: 1px solid #ddd;
             align-items: center;
         }
 
-        /* --- NOVO: ESTILOS DO EMOJI PICKER --- */
         .emoji-wrapper {
             position: relative;
             display: flex;
@@ -247,30 +250,30 @@
         .emoji-toggle-btn {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             cursor: pointer;
-            padding: 0 12px 0 0;
+            padding: 0 10px 0 0;
             transition: transform 0.1s;
         }
 
         .emoji-toggle-btn:hover {
-            transform: scale(1.15);
+            transform: scale(1.1);
         }
 
         .emoji-picker {
             display: none;
             position: absolute;
-            bottom: 150%;
+            bottom: 140%;
             left: 0;
             background-color: white;
             border: 1px solid #ccc;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 8px;
             grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
-            width: 260px;
-            max-height: 220px;
+            gap: 6px;
+            width: 230px;
+            max-height: 180px;
             overflow-y: auto;
             z-index: 100;
         }
@@ -280,24 +283,23 @@
         }
 
         .emoji-picker span {
-            font-size: 1.3rem;
+            font-size: 1.15rem;
             cursor: pointer;
             text-align: center;
             user-select: none;
-            transition: transform 0.1s;
         }
 
         .emoji-picker span:hover {
-            transform: scale(1.25);
+            transform: scale(1.2);
         }
 
         .chat-input-area input {
             flex: 1;
-            padding: 14px 20px;
+            padding: 10px 16px;
             border: 1px solid #ccc;
-            border-radius: 25px;
+            border-radius: 20px;
             outline: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: border 0.2s;
         }
 
@@ -309,12 +311,12 @@
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 14px 25px;
-            margin-left: 12px;
-            border-radius: 25px;
+            padding: 10px 18px;
+            margin-left: 10px;
+            border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.9rem;
             transition: background 0.2s;
         }
 
@@ -329,7 +331,7 @@
         <div class="auth-card">
             <h2 id="authTitle">Fazer Login</h2>
             <input type="email" id="authEmail" placeholder="Seu e-mail" required>
-            <input type="password" id="authPassword" placeholder="Sua senha (mín. 6 caracteres)" required>
+            <input type="password" id="authPassword" placeholder="Sua senha" required>
             <button id="authSubmitBtn">Entrar</button>
             <p id="authToggleText">Não tem uma conta? <span id="authToggleLink">Cadastre-se</span></p>
         </div>
@@ -343,15 +345,13 @@
                 <button class="menu-toggle-btn" id="menuToggleBtn">⋮</button>
                 <div class="dropdown-menu" id="dropdownMenu">
                     <div class="menu-user-info" id="menuUserInfo">Carregando usuário...</div>
-                    <button class="menu-item" onclick="alert('Funcionalidade de perfil em breve!')">Meu Perfil</button>
-                    <button class="menu-item" onclick="alert('Configurações em breve!')">Configurações</button>
+                    <button class="menu-item" id="wallpaperButton">🖼️ Mudar Papel de Parede</button>
                     <button class="logout-btn" id="logoutButton">Sair da Conta</button>
                 </div>
             </div>
         </div>
 
-        <div class="chat-messages" id="chatMessages">
-            </div>
+        <div class="chat-messages" id="chatMessages"></div>
 
         <div class="chat-input-area">
             <div class="emoji-wrapper" id="emojiWrapper">
@@ -361,8 +361,7 @@
                     <span>😂</span><span>🤣</span><span>😊</span><span>😇</span><span>🙂</span><span>🙃</span>
                     <span>😉</span><span>😌</span><span>😍</span><span>🥰</span><span>😘</span><span>😗</span>
                     <span>😋</span><span>😛</span><span>😝</span><span>😜</span><span>🤪</span><span>😎</span>
-                    <span>🥳</span><span>😏</span><span>👍</span><span>👎</span><span>👏</span><span>🙌</span>
-                    <span>❤️</span><span>💔</span><span>🔥</span><span>✨</span><span>🎉</span><span>🚀</span>
+                    <span>👍</span><span>👎</span><span>👏</span><span>🙌</span><span>❤️</span><span>🔥</span>
                 </div>
             </div>
 
@@ -386,18 +385,17 @@
             measurementId: "G-NYZNNHG81T"
         };
 
-        // Inicializações do Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         const messagesRef = collection(db, "messages");
 
-        // Variáveis de Controle de Estado
         let mySenderId = null;
         let isSignUpMode = false; 
         let unsubscribeMessages = null; 
+        let isInitialLoad = true; // Evita disparar alertas com o histórico antigo ao logar
 
-        // Elementos DOM da Autenticação
+        // Elementos DOM
         const authContainer = document.getElementById('authContainer');
         const chatContainer = document.getElementById('chatContainer');
         const authTitle = document.getElementById('authTitle');
@@ -407,53 +405,97 @@
         const authToggleLink = document.getElementById('authToggleLink');
         const authToggleText = document.getElementById('authToggleText');
         const logoutButton = document.getElementById('logoutButton');
-
-        // Elementos DOM do Chat
         const chatMessages = document.getElementById('chatMessages');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
-
-        // ELEMENTOS NOVOS (Menu e Emoji)
+        
         const menuToggleBtn = document.getElementById('menuToggleBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
         const menuUserInfo = document.getElementById('menuUserInfo');
+        const wallpaperButton = document.getElementById('wallpaperButton');
         const emojiToggleBtn = document.getElementById('emojiToggleBtn');
         const emojiPicker = document.getElementById('emojiPicker');
 
-        // --- LÓGICA DE INTERAÇÃO DO MENU ---
+        // --- LÓGICA DE PAPÉIS DE PAREDE ---
+        const wallpapers = ['#e5ddd5', '#ece5dd', '#2b3a4a', '#1e251f', '#f0f2f5', '#f7e3e3'];
+        let currentWallpaperIdx = 0;
+        
+        wallpaperButton.addEventListener('click', () => {
+            currentWallpaperIdx = (currentWallpaperIdx + 1) % wallpapers.length;
+            chatMessages.style.backgroundColor = wallpapers[currentWallpaperIdx];
+            dropdownMenu.classList.remove('active');
+        });
+
+        // --- SISTEMA DE NOTIFICAÇÃO (SONORA E VISUAL) ---
+        const originalTitle = document.title;
+        let unreadCount = 0;
+
+        // Gera um som agradável nativo via código (Sem carregar arquivos externos)
+        function playNotificationSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Nota D5
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.12);
+            } catch (e) {
+                console.log("Áudio bloqueado ou não suportado pelo navegador.");
+            }
+        }
+
+        function handleIncomingNotification() {
+            playNotificationSound();
+            // Notificação visual no título da aba se o usuário não estiver olhando
+            if (document.hidden) {
+                unreadCount++;
+                document.title = `📩 (${unreadCount}) Nova mensagem!`;
+            }
+        }
+
+        // Limpa as notificações visuais quando o usuário focar na janela
+        window.addEventListener('focus', () => {
+            unreadCount = 0;
+            document.title = originalTitle;
+        });
+
+        // --- INTERAÇÕES DOS MENUS ---
         menuToggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             dropdownMenu.classList.toggle('active');
-            emojiPicker.classList.remove('active'); // Fecha o emoji picker se aberto
+            emojiPicker.classList.remove('active');
         });
 
-        // --- LÓGICA DE INTERAÇÃO DO EMOJI PICKER ---
         emojiToggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             emojiPicker.classList.toggle('active');
-            dropdownMenu.classList.remove('active'); // Fecha o menu se aberto
+            dropdownMenu.classList.remove('active');
         });
 
-        // Inserir emoji no campo de texto ao clicar
         emojiPicker.querySelectorAll('span').forEach(emojiSpan => {
             emojiSpan.addEventListener('click', () => {
                 messageInput.value += emojiSpan.innerText;
-                messageInput.focus(); // Mantém o foco no input do texto
+                messageInput.focus();
             });
         });
 
-        // Fechar os menus flutuantes caso o usuário clique fora deles
         document.addEventListener('click', () => {
             dropdownMenu.classList.remove('active');
             emojiPicker.classList.remove('active');
         });
 
-        // Evita fechar os menus ao clicar dentro deles mesmos
         document.getElementById('menuWrapper').addEventListener('click', (e) => e.stopPropagation());
         document.getElementById('emojiWrapper').addEventListener('click', (e) => e.stopPropagation());
 
-
-        // --- LÓGICA DE ALTERNÂNCIA: LOGIN <=> CADASTRO ---
+        // --- LOGIN / CADASTRO ---
         authToggleLink.addEventListener('click', () => {
             isSignUpMode = !isSignUpMode;
             if (isSignUpMode) {
@@ -468,7 +510,6 @@
             document.getElementById('authToggleLink').addEventListener('click', () => authToggleLink.click());
         });
 
-        // --- SUBMIT DE AUTENTICAÇÃO (LOGIN / CADASTRO) ---
         authSubmitBtn.addEventListener('click', async () => {
             const email = authEmail.value.trim();
             const password = authPassword.value;
@@ -486,41 +527,31 @@
                     await signInWithEmailAndPassword(auth, email, password);
                 }
             } catch (error) {
-                console.error(error);
                 alert("Erro: " + error.message);
             }
         });
 
-        // --- LOGOUT (SAIR DA CONTA) ---
         logoutButton.addEventListener('click', () => {
             signOut(auth);
         });
 
-        // --- MONITOR DE ESTADO DO USUÁRIO ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 mySenderId = user.uid;
-                
-                // Atualiza o e-mail do usuário dentro do Menu Suspenso
                 menuUserInfo.innerText = `Logado como:\n${user.email}`;
-                
                 authContainer.style.display = 'none';
                 chatContainer.style.display = 'flex';
-                
+                isInitialLoad = true; // Reinicia a flag para carregar o histórico de mensagens de forma silenciosa
                 startChatListener();
             } else {
                 mySenderId = null;
                 authContainer.style.display = 'flex';
                 chatContainer.style.display = 'none';
                 chatMessages.innerHTML = ''; 
-                
-                if (unsubscribeMessages) {
-                    unsubscribeMessages();
-                }
+                if (unsubscribeMessages) unsubscribeMessages();
             }
         });
 
-        // --- LÓGICA DE RENDERIZAÇÃO DE MENSAGENS ---
         function appendMessage(text, type) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', type);
@@ -529,7 +560,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // --- ESCUTAR BANCO DE DADOS EM TEMPO REAL ---
+        // --- ESCUTAR MENSAGENS EM TEMPO REAL ---
         function startChatListener() {
             const q = query(messagesRef, orderBy("createdAt", "asc"));
             unsubscribeMessages = onSnapshot(q, (snapshot) => {
@@ -541,10 +572,22 @@
                         appendMessage(data.text, type);
                     }
                 });
+
+                // Verifica modificações em tempo real para disparar a notificação se a mensagem for recebida
+                if (!isInitialLoad) {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            const data = change.doc.data();
+                            if (data.senderId !== mySenderId) {
+                                handleIncomingNotification();
+                            }
+                        }
+                    });
+                }
+                isInitialLoad = false; // Após carregar a primeira leva de mensagens do histórico, ativa os alertas
             });
         }
 
-        // --- ENVIAR MENSAGEM PARA O FIREBASE ---
         async function sendMessage() {
             const text = messageInput.value.trim();
             if (text === '' || !mySenderId) return; 
@@ -556,13 +599,12 @@
                     createdAt: serverTimestamp()
                 });
                 messageInput.value = ''; 
-                emojiPicker.classList.remove('active'); // Opcional: Fecha os emojis ao enviar
+                emojiPicker.classList.remove('active');
             } catch (error) {
                 console.error("Erro ao enviar:", error);
             }
         }
 
-        // Eventos de envio do chat
         sendButton.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
