@@ -1,77 +1,50 @@
-http://localhost:7700/index.html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Premium Flutuante</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat Premium Mobile Fullscreen</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Remove o flash azul ao tocar no celular */
         }
 
-        /* Fundo da página imersivo para destacar a tela flutuante */
+        /* Ajuste crucial para mobile: evita scroll fantasma e se adapta às barras do navegador */
         body {
             height: 100vh;
+            height: 100dvh; 
             width: 100vw;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            background: #0f172a;
             display: flex;
-            justify-content: center;
-            align-items: center;
             overflow: hidden;
-            position: relative;
         }
 
-        /* Detalhes decorativos no fundo para dar efeito de profundidade */
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-            filter: blur(80px);
-            opacity: 0.4;
-            z-index: 1;
-        }
-        body::before { top: 10%; left: 15%; }
-        body::after { bottom: 10%; right: 15%; }
-
-        /* --- TELA FLUTUANTE DO CHAT --- */
-        .window-floating {
+        /* --- CONTAINER PRINCIPAL (ESTILO APP NATIVO) --- */
+        .window-mobile-fullscreen {
             position: relative;
-            z-index: 10;
-            width: 400px;
-            height: 650px;
-            max-width: 95vw;
-            max-height: 90vh;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            animation: floatIn 0.6s ease-out;
+            background: #1e1b4b;
         }
 
-        @keyframes floatIn {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* --- CABEÇALHO --- */
+        /* --- CABEÇALHO COMPACTO --- */
         .chat-header {
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 20;
         }
 
         .user-profile {
@@ -89,7 +62,6 @@ http://localhost:7700/index.html<!DOCTYPE html>
             justify-content: center;
             align-items: center;
             font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .user-info h3 {
@@ -112,58 +84,53 @@ http://localhost:7700/index.html<!DOCTYPE html>
             height: 6px;
             background-color: #10b981;
             border-radius: 50%;
-            display: inline-block;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
         }
 
         .btn-action {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             border: none;
             color: white;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 1rem;
-            transition: background 0.2s, transform 0.1s;
         }
 
-        .btn-action:hover {
+        .btn-action:active {
             background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
+            transform: scale(0.95);
         }
 
-        /* --- ÁREA DE MENSAGENS (COM PAPEL DE PAREDE) --- */
+        /* --- ÁREA DE MENSAGENS REALISTA --- */
         .chat-messages {
             flex: 1;
-            padding: 20px;
+            padding: 16px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            background-color: #1e1b4b; /* Padrão Inicial */
+            background-color: #1e1b4b; 
             background-size: cover;
             background-position: center;
-            transition: background 0.4s ease;
+            transition: background 0.3s ease;
+            /* Scroll suave para iOS */
+            -webkit-overflow-scrolling: touch; 
         }
 
-        /* Customização da barra de rolagem */
+        /* Oculta barra de rolagem padrão para parecer app nativo */
         .chat-messages::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         .chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
 
-        /* Balões de Mensagem */
+        /* Balões adaptados para telas estreitas */
         .message-row {
             display: flex;
             width: 100%;
@@ -174,12 +141,12 @@ http://localhost:7700/index.html<!DOCTYPE html>
 
         .message-bubble {
             padding: 10px 14px;
-            border-radius: 16px;
-            max-width: 80%;
-            font-size: 0.9rem;
+            border-radius: 18px;
+            max-width: 85%; /* Aproveita muito mais o espaço lateral no celular */
+            font-size: 0.92rem;
             line-height: 1.4;
             color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             word-wrap: break-word;
         }
 
@@ -189,84 +156,87 @@ http://localhost:7700/index.html<!DOCTYPE html>
         }
 
         .message-row.received .message-bubble {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
             border-bottom-left-radius: 2px;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        /* Exibição de Fotos no Chat */
         .message-bubble img {
             max-width: 100%;
-            max-height: 200px;
-            border-radius: 12px;
+            max-height: 260px;
+            border-radius: 10px;
             margin-top: 4px;
             display: block;
             object-fit: cover;
         }
 
-        /* --- ÁREA DE ENTRADA / INPUT --- */
+        /* --- ÁREA DE INPUT DE TOQUE FÁCIL --- */
         .chat-input-area {
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.2);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 12px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             position: relative;
+            z-index: 20;
         }
 
         .chat-input-area input[type="text"] {
             flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 12px 16px;
-            border-radius: 50px;
+            border-radius: 24px;
             color: white;
             outline: none;
-            font-size: 0.9rem;
-            transition: border 0.2s;
+            font-size: 0.95rem; /* Evita que o iOS dê zoom automático indesejado */
         }
 
         .chat-input-area input[type="text"]::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .chat-input-area input[type="text"]:focus {
             border-color: #3b82f6;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .btn-send {
             background: #3b82f6;
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 50px;
+            padding: 12px 18px;
+            border-radius: 24px;
             font-weight: bold;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
-        .btn-send:hover {
+        .btn-send:active {
             background: #2563eb;
         }
 
-        /* --- SELETOR DE EMOJIS FLUTUANTE --- */
+        /* --- SELETOR DE EMOJIS ESTILO "BOTTOM SHEET" NO MOBILE --- */
         .emoji-picker {
             display: none;
             position: absolute;
-            bottom: 80px;
-            left: 16px;
+            bottom: 68px;
+            left: 12px;
+            width: calc(100% - 24px); /* Ocupa a largura quase inteira do celular */
             background: rgba(15, 23, 42, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 18px;
+            padding: 14px;
             grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             z-index: 30;
-            width: 240px;
         }
 
         .emoji-picker.active {
@@ -274,39 +244,34 @@ http://localhost:7700/index.html<!DOCTYPE html>
         }
 
         .emoji-picker span {
-            font-size: 1.25rem;
+            font-size: 1.5rem; /* Ícones maiores para facilitar o clique com o polegar */
             cursor: pointer;
             text-align: center;
             user-select: none;
-            transition: transform 0.1s;
-        }
-
-        .emoji-picker span:hover {
-            transform: scale(1.25);
         }
     </style>
 </head>
 <body>
 
-    <div class="window-floating">
+    <div class="window-mobile-fullscreen">
         
         <div class="chat-header">
             <div class="user-profile">
                 <div class="avatar">🤖</div>
                 <div class="user-info">
-                    <h3>Chat Flutuante</h3>
+                    <h3>Chat Mobile</h3>
                     <p>Online</p>
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn-action" id="btnWallpaper" title="Mudar Papel de Parede">🖼️</button>
+                <button class="btn-action" id="btnWallpaper" title="Mudar Fundo">🖼️</button>
             </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
             <div class="message-row received">
                 <div class="message-bubble">
-                    Olá! Sou o assistente local. Teste o envio de textos, os emojis 😊 ou adicione fotos do seu aparelho!
+                    Olá! Interface 100% ajustada para smartphones. Envie textos, fotos ou toque nos emojis sem quebras de tela! 📱✨
                 </div>
             </div>
         </div>
@@ -320,10 +285,10 @@ http://localhost:7700/index.html<!DOCTYPE html>
         <div class="chat-input-area">
             <button class="btn-action" id="btnEmoji">😊</button>
             
-            <button class="btn-action" id="btnFile" title="Escolher Foto">📷</button>
+            <button class="btn-action" id="btnFile" title="Foto">📷</button>
             <input type="file" id="fileInput" accept="image/*" style="display: none;">
 
-            <input type="text" id="messageInput" placeholder="Digite sua mensagem..." autocomplete="off">
+            <input type="text" id="messageInput" placeholder="Mensagem..." autocomplete="off">
             
             <button class="btn-send" id="btnSend">Enviar</button>
         </div>
@@ -340,14 +305,12 @@ http://localhost:7700/index.html<!DOCTYPE html>
         const btnFile = document.getElementById('btnFile');
         const fileInput = document.getElementById('fileInput');
 
-        // --- LISTA DE PAPÉIS DE PAREDE ---
-        // Mistura de cores sólidas, gradientes e texturas CSS
         const wallpapers = [
-            'linear-gradient(135deg, #1e1b4b 0%, #311042 100%)', // Padrão Escuro Roxo
-            'linear-gradient(135deg, #0f172a 0%, #0284c7 100%)', // Azul Noturno
-            '#111827', // Totalmente Negro Puro
-            'linear-gradient(to top, #09203f 0%, #537895 100%)', // Cinza Azulado Elegante
-            '#16a34a'  // Verde Estilo App de Mensagens Tradicional
+            'linear-gradient(135deg, #1e1b4b 0%, #311042 100%)',
+            'linear-gradient(135deg, #0f172a 0%, #0284c7 100%)',
+            '#111827',
+            'linear-gradient(to top, #09203f 0%, #537895 100%)',
+            '#16a34a'
         ];
         let currentWallpaperIdx = 0;
 
@@ -356,7 +319,6 @@ http://localhost:7700/index.html<!DOCTYPE html>
             chatMessages.style.background = wallpapers[currentWallpaperIdx];
         });
 
-        // --- SISTEMA DE SELEÇÃO DE EMOJIS ---
         btnEmoji.addEventListener('click', (e) => {
             e.stopPropagation();
             emojiPicker.classList.toggle('active');
@@ -369,13 +331,11 @@ http://localhost:7700/index.html<!DOCTYPE html>
             });
         });
 
-        // Fecha janelas ao clicar fora
         document.addEventListener('click', () => {
             emojiPicker.classList.remove('active');
         });
         emojiPicker.addEventListener('click', (e) => e.stopPropagation());
 
-        // --- SISTEMA DE RENDERIZAÇÃO DE MENSAGENS ---
         function appendMessage(content, type, isImage = false) {
             const row = document.createElement('div');
             row.classList.add('message-row', type);
@@ -386,7 +346,7 @@ http://localhost:7700/index.html<!DOCTYPE html>
             if (isImage) {
                 const img = document.createElement('img');
                 img.src = content;
-                img.alt = "Imagem carregada";
+                img.alt = "Imagem";
                 img.onload = () => {
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 };
@@ -400,7 +360,6 @@ http://localhost:7700/index.html<!DOCTYPE html>
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // Enviar Mensagem de Texto
         function handleSend() {
             const text = messageInput.value.trim();
             if (text === '') return;
@@ -409,9 +368,8 @@ http://localhost:7700/index.html<!DOCTYPE html>
             messageInput.value = '';
             emojiPicker.classList.remove('active');
 
-            // Simulador de Resposta Automática (Mock Bot)
             setTimeout(() => {
-                appendMessage("Mensagem recebida com sucesso na tela flutuante! 🚀", 'received');
+                appendMessage("Recebido no celular! 📱🚀", 'received');
             }, 1000);
         }
 
@@ -420,7 +378,6 @@ http://localhost:7700/index.html<!DOCTYPE html>
             if (e.key === 'Enter') handleSend();
         });
 
-        // --- CARREGAMENTO DE FOTOS LOCAIS ---
         btnFile.addEventListener('click', () => {
             fileInput.click();
         });
@@ -429,18 +386,13 @@ http://localhost:7700/index.html<!DOCTYPE html>
             const file = e.target.files[0];
             if (!file) return;
 
-            // Cria uma URL temporária local para a imagem selecionada pelo usuário
             const localImgUrl = URL.createObjectURL(file);
-            
-            // Exibe a imagem enviada por você no chat
             appendMessage(localImgUrl, 'sent', true);
 
-            // Resposta automatizada simulando o recebimento da imagem
             setTimeout(() => {
-                appendMessage("Que foto legal! Ela foi processada localmente na interface. 📸✨", 'received');
+                appendMessage("Foto processada no dispositivo mobile! 📸", 'received');
             }, 1500);
 
-            // Limpa o input de arquivo para permitir enviar a mesma imagem de novo se quiser
             fileInput.value = '';
         });
     </script>
